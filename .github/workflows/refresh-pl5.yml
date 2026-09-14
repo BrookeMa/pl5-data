@@ -36,3 +36,15 @@ jobs:
           git add pl5_5digit.csv
           git commit -m "data: 更新至 ${{ steps.build.outputs.latest_period }} (${{ steps.build.outputs.latest_date }})"
           git push
+
+      # 每次成功都重传一遍：--clobber 是幂等的，顺便能自愈掉资产丢失的情况
+      - name: 更新 Release 资产
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release upload latest pl5_5digit.csv --clobber
+          NOW=$(TZ=Asia/Shanghai date '+%Y-%m-%d %H:%M')
+          gh release edit latest --notes "固定下载链接（永远指向最新一份，点开即下载）：
+          https://github.com/${{ github.repository }}/releases/latest/download/pl5_5digit.csv
+
+          总期数 ${{ steps.build.outputs.rows }} · 最新 ${{ steps.build.outputs.latest_period }} / ${{ steps.build.outputs.latest_date }} · 更新于 $NOW（北京时间）"

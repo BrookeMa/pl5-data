@@ -2,13 +2,22 @@
 
 每天自动更新的排列5（5 位数）历史开奖 CSV。数据源：`https://data.17500.cn/pl5_asc.txt`
 
-## 直链
+## 下载链接
+
+**点开就下载**（浏览器里用这个，响应头带 `content-disposition: attachment`）：
+
+```
+https://github.com/BrookeMa/pl5-data/releases/latest/download/pl5_5digit.csv
+```
+
+**程序里取数**（`curl` / `fetch` / `pandas.read_csv`，带 `access-control-allow-origin: *`，前端跨域可直接读）：
 
 ```
 https://raw.githubusercontent.com/BrookeMa/pl5-data/main/pl5_5digit.csv
 ```
 
-`raw.githubusercontent.com` 的缓存是 300 秒，所以拿到的基本就是仓库里的最新状态。
+两个都永远指向最新一份。raw 那条缓存 300 秒；Release 那条是每次数据更新后由 Actions 重传的，
+链接本身固定不变。raw 的 `content-type` 是 `text/plain`，浏览器里点会直接把内容铺在页面上。
 
 ## 文件
 
