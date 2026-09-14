@@ -1,0 +1,16 @@
+{
+  "name": "pl5-csv",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "setup": "wrangler r2 bucket create pl5-archive",
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "test": "node test/parse.test.mjs",
+    "tail": "wrangler tail"
+  },
+  "devDependencies": {
+    "wrangler": "^4.0.0"
+  }
+}

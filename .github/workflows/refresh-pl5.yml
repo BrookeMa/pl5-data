@@ -1,0 +1,38 @@
+name: 更新排列5数据
+
+on:
+  schedule:
+    # 北京时间 21:00 起每半小时一次，到次日 00:30
+    # 排列5 每天 20:30 开奖；GitHub 的定时任务经常延迟 5~20 分钟，所以多排几次兜住
+    - cron: "*/30 13-16 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: refresh-pl5
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      # 数据不健康或期数倒退时这一步会失败，pl5_5digit.csv 保持原样
+      - id: build
+        run: node scripts/build-pl5.mjs
+
+      - name: 提交更新
+        if: steps.build.outputs.changed == 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add pl5_5digit.csv
+          git commit -m "data: 更新至 ${{ steps.build.outputs.latest_period }} (${{ steps.build.outputs.latest_date }})"
+          git push

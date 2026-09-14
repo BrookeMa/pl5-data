@@ -1,0 +1,24 @@
+name = "pl5-csv"
+main = "src/index.js"
+compatibility_date = "2026-09-01"
+
+[observability]
+enabled = true
+
+[vars]
+UPSTREAM = "https://data.17500.cn/pl5_asc.txt"
+# 边缘缓存秒数：上游每天 20:30 后更新一次，5 分钟足够新
+CACHE_SECONDS = "300"
+# 浏览器保存下来的文件名
+FILENAME = "pl5.csv"
+
+# 兜底存档：上游挂了 / 返回坏数据时，用这里最后一份好的顶上
+# 建桶：npx wrangler r2 bucket create pl5-archive
+[[r2_buckets]]
+binding = "ARCHIVE"
+bucket_name = "pl5-archive"
+
+# 每天 13:00 UTC = 21:00 北京时间，开奖后把存档刷一遍
+# 只影响兜底存档的新鲜度，链接本身不依赖它
+[triggers]
+crons = ["0 13 * * *"]
